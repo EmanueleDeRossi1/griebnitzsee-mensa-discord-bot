@@ -5,7 +5,6 @@ from datetime import datetime
 
 WEBHOOK_URL = os.environ.get('DISCORD_WEBHOOK_URL')
 
-# Map day numbers (0=Monday) to German day names for URL
 DAYS = {
     0: 'montag',
     1: 'dienstag', 
@@ -14,7 +13,6 @@ DAYS = {
     4: 'freitag'
 }
 
-# Emoji mapping for different categories
 CATEGORY_EMOJIS = {
     'angebot': '🍽️',
     'dessert': '🍰',
@@ -78,12 +76,10 @@ def scrape_menu():
         price = ""
         if price_text and '€' in price_text:
             try:
-                # Extract student price
                 student_price = float(price_text.replace('€', '').replace(',', '.').strip())
                 # Calculate employee and guest prices (fixed markup from Studierendenwerk Potsdam)
                 employee_price = student_price + 2.55
                 guest_price = student_price + 3.55
-                # Format all three prices (Student/Employee/Guest)
                 price = f"{student_price:.2f} / {employee_price:.2f} / {guest_price:.2f} €".replace('.', ',')
             except (ValueError, AttributeError):
                 price = price_text
@@ -121,7 +117,6 @@ def send_to_discord(content, day_name):
         print("Error: DISCORD_WEBHOOK_URL not set")
         return False
     
-    # Get German day name for display
     day_names_de = {
         'montag': 'Montag',
         'dienstag': 'Dienstag',
@@ -137,7 +132,7 @@ def send_to_discord(content, day_name):
     embed = {
         "title": f"🍽️ Mensa Griebnitzsee — {display_day}",
         "description": content,
-        "color": 0x0e3a57,  # Blue color matching the mensa website
+        "color": 0x0e3a57,
         "footer": {
             "text": f"Speiseplan für {date_str} • Preise: Studierende / Mitarbeitende / Gäste"
         },
@@ -177,8 +172,7 @@ def main():
         print("Menu is too long, truncating...")
         menu = menu[:3900] + "\n\n*... (gekürzt)*"
     
-    #send_to_discord(menu, day_name)
-    print(menu)
+    send_to_discord(menu, day_name)
 
 if __name__ == "__main__":
     main()
