@@ -26,4 +26,4 @@ jobs:
     - name: Scrape and post menu
       env:
         DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-      run: python scrape_menu.py
+      run: python scrape.py
