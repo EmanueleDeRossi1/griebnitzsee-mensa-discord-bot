@@ -1,0 +1,29 @@
+name: Daily Mensa Menu
+
+on:
+  schedule:
+    # Runs at 10:00 AM UTC (11:00 AM CET) Monday-Friday
+    - cron: '0 10 * * 1-5'
+  workflow_dispatch: # Manual triggering
+
+jobs:
+  post-menu:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4
+        
+    - name: Scrape and post menu
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: python scrape_menu.py
