@@ -2,6 +2,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+from difflib import SequenceMatcher
 
 WEBHOOK_URL = os.environ.get('DISCORD_WEBHOOK_URL')
 
@@ -35,6 +36,8 @@ def scrape_menu():
     
     # Find all meal categories
     menu_items = []
+    # Some items are repeated, filter them out later
+    seen_descriptions = []
     meal_categories = soup.find_all('div', class_='aw-meal-category')
     
     for category in meal_categories:
@@ -44,6 +47,10 @@ def scrape_menu():
             continue
             
         category_text = category_name.get_text(strip=True)
+
+        # Skip "Abend" items
+        if 'Abend' in category_text:
+            continue
         
         # Get meal description
         meal_desc = category.find('p', class_='aw-meal-description')
@@ -51,7 +58,19 @@ def scrape_menu():
             continue
             
         description = meal_desc.get_text(strip=True)
+
+        # Skip if too similar to existing descriptions
+        is_duplicate = False
+        for seen in seen_descriptions:
+            similarity = SequenceMatcher(None, description.lower(), seen.lower()).ratio()
+            if similarity > 0.75:
+                is_duplicate = True
+                break
         
+        if is_duplicate:
+            continue
+
+        seen_descriptions.append(description)        
         # Get price if available
         price_elem = category.find('div', class_='aw-meal-price')
         price_text = price_elem.get_text(strip=True) if price_elem else ""
@@ -139,7 +158,8 @@ def main():
         print("Menu is too long, truncating...")
         menu = menu[:3900] + "\n\n*... (gekürzt)*"
     
-    send_to_discord(menu, day_name)
+    # send_to_discord(menu, day_name)
+    print(menu)
 
 if __name__ == "__main__":
     main()
