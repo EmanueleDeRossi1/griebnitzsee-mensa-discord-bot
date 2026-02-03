@@ -48,8 +48,8 @@ def scrape_menu():
             
         category_text = category_name.get_text(strip=True)
 
-        # Skip "Abend" items
-        if 'Abend' in category_text:
+        # Skip "Abend" and "Theke" items
+        if 'Abend' in category_text or 'theke' in category_text.lower():
             continue
         
         # Get meal description
