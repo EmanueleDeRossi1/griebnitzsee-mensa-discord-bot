@@ -80,13 +80,18 @@ def scrape_menu():
         if price_text and '€' in price_text:
             try:
                 student_price = float(price_text.replace('€', '').replace(',', '.').strip())
-                # Calculate employee and guest prices (fixed markup from Studierendenwerk Potsdam)
-                employee_price = student_price + 2.55
-                guest_price = student_price + 3.55
+                # Calculate employee and guest prices
+                if 'Dessert' in category_text:
+                    employee_price = student_price + 0.50
+                    guest_price = student_price + 0.50
+                else:
+                    # Fixed markup from Studierendenwerk Potsdam
+                    employee_price = student_price + 2.55
+                    guest_price = student_price + 3.55
                 price = f"{student_price:.2f} / {employee_price:.2f} / {guest_price:.2f} €".replace('.', ',')
             except (ValueError, AttributeError):
                 price = price_text
-                        
+                                        
         # Format: • Price (Category Name) - Dietary Info
         # Description on next line
         item_text = f"• {category_text} **{price}**"
