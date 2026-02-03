@@ -13,22 +13,6 @@ DAYS = {
     4: 'freitag'
 }
 
-CATEGORY_EMOJIS = {
-    'angebot': '🍽️',
-    'dessert': '🍰',
-    'salat': '🥗',
-    'snack': '🥖',
-    'heiße theke': '🔥',
-    'abend': '🌙'
-}
-
-def get_emoji_for_category(category_name):
-    """Get appropriate emoji for menu category"""
-    category_lower = category_name.lower()
-    for key, emoji in CATEGORY_EMOJIS.items():
-        if key in category_lower:
-            return emoji
-    return '•'
 
 def scrape_menu():
     """Scrape the daily menu from the mensa website"""
@@ -83,28 +67,11 @@ def scrape_menu():
                 price = f"{student_price:.2f} / {employee_price:.2f} / {guest_price:.2f} €".replace('.', ',')
             except (ValueError, AttributeError):
                 price = price_text
-        
-        # Get dietary info (vegan, vegetarian, etc.)
-        attributes = category.find('p', class_='aw-meal-attributes')
-        dietary_info = ""
-        if attributes:
-            attr_text = attributes.get_text(strip=True)
-            # Extract just the first part (vegan/vegetarian/etc)
-            if 'NÄHRWERT' in attr_text:
-                dietary_info = attr_text.split('NÄHRWERT')[0].strip()
-            else:
-                dietary_info = attr_text.split('ZUSATZ')[0].split('ALLERGEN')[0].strip()
-        
-        # Format the menu item
-        emoji = get_emoji_for_category(category_text)
-        
+                        
         # Format: • Price (Category Name) - Dietary Info
         # Description on next line
-        item_text = f"• **{price}** ({category_text})"
-        
-        if dietary_info:
-            item_text += f" `{dietary_info}`"
-        
+        item_text = f"• {category_text} **{price}**"
+                
         item_text += f"\n{description}"
         
         menu_items.append(item_text)
@@ -172,7 +139,8 @@ def main():
         print("Menu is too long, truncating...")
         menu = menu[:3900] + "\n\n*... (gekürzt)*"
     
-    send_to_discord(menu, day_name)
+    #send_to_discord(menu, day_name)
+    print(menu)
 
 if __name__ == "__main__":
     main()
