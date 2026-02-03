@@ -139,8 +139,7 @@ def main():
         print("Menu is too long, truncating...")
         menu = menu[:3900] + "\n\n*... (gekürzt)*"
     
-    #send_to_discord(menu, day_name)
-    print(menu)
+    send_to_discord(menu, day_name)
 
 if __name__ == "__main__":
     main()
