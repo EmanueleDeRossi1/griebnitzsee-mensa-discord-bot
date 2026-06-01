@@ -2,8 +2,8 @@ name: Daily Mensa Menu
 
 on:
   schedule:
-    # Runs at 06:43 AM UTC (07:43 AM CET) Monday-Friday
-    - cron: '43 6 * * 1-5'
+    # Runs at 04:43 AM UTC (05:43 AM CET) Monday-Friday
+    - cron: '43 4 * * 1-5'
   workflow_dispatch: # Manual triggering
 
 jobs:
